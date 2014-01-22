@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Please see for more info:
+# http://mylatestmoneysink.blogspot.com/2014/01/driving-1100-motors-with-tb6612fng.html
 
 import RPi.GPIO as GPIO
 import sys
