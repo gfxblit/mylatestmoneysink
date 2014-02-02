@@ -23,12 +23,8 @@ class HCSR04:
         while GPIO.input(self._echoPin) == 0:
             start = time.time()
 
-        count = 0
         while GPIO.input(self._echoPin) == 1:
             stop = time.time()
-#            count = count + 1
-        
-        if count == 10000: return 0
         
         return (stop - start)  * 1000000.0 / 58.0;
          
