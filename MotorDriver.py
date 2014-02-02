@@ -23,12 +23,12 @@ class MotorDriver:
     def _outputToMotor(self, motor, bits):
         GPIO.output(self._pins[motor][0], bits[0])
         GPIO.output(self._pins[motor][1], bits[1])
- 
+    
     # period is in seconds, if < 0, will run until a new command is issued
     def forward(self, period):
         self._outputToMotor(0, [GPIO.LOW, GPIO.HIGH])
         self._outputToMotor(1, [GPIO.LOW, GPIO.HIGH])
-        if time >= 0:
+        if period > 0:
             time.sleep(period)
             self.stop()
         
@@ -39,21 +39,21 @@ class MotorDriver:
     def reverse(self, period):
         self._outputToMotor(0, [GPIO.HIGH, GPIO.LOW])
         self._outputToMotor(1, [GPIO.HIGH, GPIO.LOW])
-        if time >= 0:
+        if period > 0:
             time.sleep(period)
             self.stop()
     
     def rotateCW(self, period):
         self._outputToMotor(0, [GPIO.HIGH, GPIO.LOW])
         self._outputToMotor(1, [GPIO.LOW,  GPIO.HIGH])        
-        if time >= 0:
+        if period > 0:
             time.sleep(period)
             self.stop()
     
     def rotateCCW(self, period):
         self._outputToMotor(0, [GPIO.LOW, GPIO.HIGH])
         self._outputToMotor(1, [GPIO.HIGH,GPIO.LOW])        
-        if time >= 0:
+        if period > 0:
             time.sleep(period)
             self.stop()
                 
