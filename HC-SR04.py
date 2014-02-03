@@ -26,7 +26,7 @@ class HCSR04:
         while GPIO.input(self._echoPin) == 1:
             stop = time.time()
         
-        return (stop - start)  * 1000000.0 / 58.0;
+        return (stop - start)  * 17241.37931034482759 # 1000000 / 58
          
     def __del__(self):
         GPIO.cleanup()
