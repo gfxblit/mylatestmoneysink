@@ -5,11 +5,7 @@ import re
 import sys
 
 localSrcDir = os.environ['LOCAL_SRC']
-print "local source root dir: " + localSrcDir
-#print os.environ['RPI_SRC']
 curDir = os.getcwd()
-print "current dir: " + curDir
-
 
 # match to find the subdirectory within the local source root
 pattern = re.compile("(" + localSrcDir + ")(.+)")
