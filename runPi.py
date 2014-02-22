@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/local/bin/python3.2
 
 import os
 import re
@@ -17,8 +17,10 @@ rPiPath = os.environ['RPI_SRC'] + subDir
 
 # rsync over to the pi
 file = sys.argv[1]
-cmd = "rsync -a -e ssh " + curDir + "/ pi@10.0.0.40:" + rPiPath
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+cmd = "rsync -av -e ssh " + curDir + "/ pi@10.0.0.40:" + rPiPath
 os.system(cmd)
+print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
 # execute the remote command
 cmd = 'ssh -t pi@10.0.0.40 "' + "cd " + rPiPath + " ; sudo ./" + file + '"'
