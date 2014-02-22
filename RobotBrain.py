@@ -22,17 +22,18 @@ if __name__ == "__main__":
     if raw_input("Success? [Y/n] ") == "n" : exit() 
     
     print "Testing motor driver..."
-    if raw_input("Moving forward...success? [Y/n] ") == "n" : exit()
+
     motorDriver.forward(0.1)
+    if raw_input("Moving forward...success? [Y/n] ") == "n" : exit()
 
-    if raw_input("Moving backward...success? [Y/n] ") == "n" : exit()
     motorDriver.reverse(0.1)
+    if raw_input("Moving backward...success? [Y/n] ") == "n" : exit()
 
-    if raw_input("Rotating to the right...success? [Y/n] ") == "n" : exit()
     motorDriver.rotateCW(0.1)
+    if raw_input("Rotating to the right...success? [Y/n] ") == "n" : exit()
 
-    if raw_input("Rotating to the left...success? [Y/n] ") == "n" : exit()
     motorDriver.rotateCCW(0.1)
+    if raw_input("Rotating to the left...success? [Y/n] ") == "n" : exit()
     
     if raw_input("All tests succeeded. Proceed? [Y/n] ") == "n" : exit()
     
