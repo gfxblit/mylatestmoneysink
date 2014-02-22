@@ -1,51 +1,66 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import RPi.GPIO as GPIO
 import time
+from enum import Enum
 from HCSR04 import HCSR04
 from MotorDriver import MotorDriver
 	
+class State(Enum) :
+    Search = 0
+    Forward = 1
+    
 if __name__ == "__main__":
     triggerPin = 18
     echoPin = 23
+    state = State.Search
         
-    if raw_input("Running pre-flight tests. Proceed? [Y/n] ") == "n" : exit()
+    if input("Running pre-flight tests. Proceed? [Y/n] ") == "n" : exit()
     
     hcsr04 = HCSR04(triggerPin, echoPin)
     motorDriver = MotorDriver()
 
-    print "Testing sensor..."
+    print("Testing sensor...")
+    
     for i in range(0, 19) :
-        print "Range: " + str(hcsr04.getRangeInCentimeters())
+        print ("Range: " + str(hcsr04.getRangeInCentimeters()))
         time.sleep(0.5)
         
-    if raw_input("Success? [Y/n] ") == "n" : exit() 
+    if input("Success? [Y/n] ") == "n" : exit() 
     
-    print "Testing motor driver..."
+    print ("Testing motor driver...")
 
     motorDriver.forward(0.1)
-    if raw_input("Moving forward...success? [Y/n] ") == "n" : exit()
+    if input("Moving forward...success? [Y/n] ") == "n" : exit()
 
     motorDriver.reverse(0.1)
-    if raw_input("Moving backward...success? [Y/n] ") == "n" : exit()
+    if input("Moving backward...success? [Y/n] ") == "n" : exit()
 
-    motorDriver.rotateCW(0.1)
-    if raw_input("Rotating to the right...success? [Y/n] ") == "n" : exit()
+    motorDriver.turnRight(0.1)
+    if input("Rotating to the right...success? [Y/n] ") == "n" : exit()
 
-    motorDriver.rotateCCW(0.1)
-    if raw_input("Rotating to the left...success? [Y/n] ") == "n" : exit()
+    motorDriver.turnLeft(0.1)
+    if input("Rotating to the left...success? [Y/n] ") == "n" : exit()
     
-    if raw_input("All tests succeeded. Proceed? [Y/n] ") == "n" : exit()
+    if input("All tests succeeded. Proceed? [Y/n] ") == "n" : exit()
     
     while 1:
-        print "sensing..."
+        startState = state
+        
         range = hcsr04.getRangeInCentimeters()
-        print "range is " + str(range)
 
-        if range > 50:
-            print "moving forward 0.5 secs"
-            motorDriver.forward(0.5)
+        if range < 50:
+            state = State.Search
         else:
-            print "checking to the right"
-            motorDriver.rotateCW(0.2)
-        time.sleep(1)
+            state = State.Forward
+        
+        if startState != state:
+            print("New state: " + str(state))
+        
+        # do something based on the state
+        if state == State.Search:
+            motorDriver.turnRight(0)
+        elif state == State.Forward:
+            motorDriver.forward(0)
+
+        time.sleep(.1)
