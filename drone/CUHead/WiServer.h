@@ -248,6 +248,8 @@ class Server: public Print
 		 * A value of -1 disables activity indication.
 		 */
 		void setIndicatorPins(int tx, int rx);
+    
+        U8 getConnectionState();
 	
 #ifdef ENABLE_CLIENT_MODE
 

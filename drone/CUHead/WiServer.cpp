@@ -83,9 +83,12 @@ char rxPin = -1;
 /* Enables basic log messages via Serial */
 boolean verbose = false;
 
+U8 Server::getConnectionState()
+{
+    return zg_get_conn_state();
+}
 
 void Server::init(pageServingFunction function) {
-
 	// WiShield init
 	zg_init();
 
