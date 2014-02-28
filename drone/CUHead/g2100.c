@@ -82,6 +82,11 @@ void zg_init()
 	security_passphrase_len = (U8)strlen_P(security_passphrase);
 }
 
+void toggleLED()
+{
+    LEDConn_toggle();
+}
+
 void spi_transfer(volatile U8* buf, U16 len, U8 toggle_cs)
 {
 	U16 i;
@@ -536,7 +541,7 @@ void zg_drv_process()
 		zg_buf[1] = ZG_MAC_TYPE_MGMT_REQ;
 		zg_buf[2] = ZG_MAC_SUBTYPE_MGMT_REQ_CONNECT_MANAGE;
 		zg_buf[3] = 0x01;	// 0x01 - enable; 0x00 - disable
-		zg_buf[4] = 10;		// num retries to reconnect
+		zg_buf[4] = 0xFF;		// num retries to reconnect
 		zg_buf[5] = 0x10 | 0x02 | 0x01;	// 0x10 -	enable start and stop indication messages
 										// 		 	from G2100 during reconnection
 										// 0x02 -	start reconnection on receiving a deauthentication

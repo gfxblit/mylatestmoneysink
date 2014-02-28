@@ -299,4 +299,6 @@ void zg_set_ssid(U8* ssid, U8 ssid_len);
 void zg_set_sec(U8 sec_type, U8* sec_key, U8 sec_key_len);
 void zg_drv_process();
 
+void toggleLED();
+
 #endif /* G2100_H_ */

@@ -83,9 +83,12 @@ char rxPin = -1;
 /* Enables basic log messages via Serial */
 boolean verbose = false;
 
+U8 Server::getConnectionState()
+{
+    return zg_get_conn_state();
+}
 
 void Server::init(pageServingFunction function) {
-
 	// WiShield init
 	zg_init();
 
@@ -100,8 +103,22 @@ void Server::init(pageServingFunction function) {
 	PCMSK0 |= (1<<PCINT0);
 #endif
 
+    unsigned long start = millis();
+    unsigned long lastUpdatedLEDTime = millis();
 	while(zg_get_conn_state() != 1) {
 		zg_drv_process();
+        unsigned long current = millis();
+        if (current - start > 600000) { // 10 minutes
+            return;
+        }
+    
+        // flip the LED state
+        if (current - lastUpdatedLEDTime > 500) {
+            toggleLED();
+            lastUpdatedLEDTime = current;
+        }
+        
+
 	}
 
 	// Start the stack
