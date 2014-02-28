@@ -104,12 +104,21 @@ void Server::init(pageServingFunction function) {
 #endif
 
     unsigned long start = millis();
+    unsigned long lastUpdatedLEDTime = millis();
 	while(zg_get_conn_state() != 1) {
 		zg_drv_process();
         unsigned long current = millis();
         if (current - start > 600000) { // 10 minutes
             return;
         }
+    
+        // flip the LED state
+        if (current - lastUpdatedLEDTime > 500) {
+            toggleLED();
+            lastUpdatedLEDTime = current;
+        }
+        
+
 	}
 
 	// Start the stack
