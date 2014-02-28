@@ -6,11 +6,7 @@
 #include <Servo.h>
 #include <WiServer.h>
 
-
-// Definizione Variabili Globali Stato Led
-byte thestart = 0;  // Stato led rosso
-
-
+byte thestart = 0;  
 
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
@@ -55,7 +51,7 @@ boolean sendMyPage(char* URL) {
     }
     
     
-    // Se URL richieso corrisponde a "?OPERATION=ACCENDI_ROSSO
+  
 	  if (strcmp (URL, "/?OPERATION=OFF") == 0) {
            thestart = 1;
            Invia_Pagina_Web();
@@ -65,7 +61,7 @@ boolean sendMyPage(char* URL) {
 	    return (true);
 	  }    
 	 
-	  // Se URL richieso corrisponde a "?OPERATION=SPEGNI_ROSSO"
+	
 	  if (strcmp (URL, "/?OPERATION=ON") == 0) {
 	    thestart = 0;
             Invia_Pagina_Web();
@@ -107,15 +103,6 @@ int val = 0; // variable for reading the pin status
 // IP Address for www.weather.gov  
 uint8 ip[] = {184,168,17,1};
 
-// A request that gets the latest METAR weather data for LAX
-//GETrequest getWeather(ip, 80, "www.onebuttonalert.com", "/makevoicecall/?accesscode=iHHusuLm2uNe&customersid=14");
-
-//GETrequest getWeathersms(ip, 80, "www.onebuttonalert.com", "/makesmsnow/?accesscode=iHHusuLm2uNe&customersid=14");
-    
-
-
-
-    
 // This is our motor.
 Servo myMotor;
 
@@ -150,14 +137,6 @@ void setup() {
   // Required for I/O from Serial monitor
   Serial.begin(57600);
   Serial.println("Starting WiFi");
-  // Print a startup message
- // Serial.println("initializing");
-   
-  // pinMode(PIN_BLUEII, OUTPUT);
-//   pinMode(PIN_RED , OUTPUT);
- //  pinMode(ledPin, OUTPUT); // declare LED as output
-  // pinMode(buttonPin, INPUT); // declare pushbutton as input
-
 
   // Initialize WiServer and have it use the sendMyPage function to serve pages
   WiServer.init(sendMyPage);
@@ -172,35 +151,11 @@ void setup() {
 
 
 
-void loop(){
-  
-  //val = digitalRead(buttonPin); // read input value
-  
-//if (val == HIGH) { // check if the input is HIGH (button released)
-//digitalWrite(PIN_BLUEII, LOW); // turn LED OFF
-   
-//} else {
-//digitalWrite(PIN_BLUEII, HIGH ); // turn LED ON
-
- // a request to server page to make a sms
-  // getWeathersms.submit();
-   
-  // getWeather.submit(); 
- //  delay(50);
- 
-    // A request to server page make a call
- //  getWeather.submit(); 
-   
-
-//}
-
+void loop()
+{
   // Run WiServer
   WiServer.server_task();
   delay(10);
-
-
-
-
 }
 
 
@@ -268,15 +223,13 @@ WiServer.print ("<title>OneButtonAlert Device</title>");
 
 	}
 	 
-	// Spegne il led rosso
+
 	void move_to_end() {
 
          myMotor.write(70);
          
        
 	}
-
-
 
 	void move_to_ninty() {
 
