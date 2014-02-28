@@ -82,6 +82,11 @@ void zg_init()
 	security_passphrase_len = (U8)strlen_P(security_passphrase);
 }
 
+void toggleLED()
+{
+    LEDConn_toggle();
+}
+
 void spi_transfer(volatile U8* buf, U16 len, U8 toggle_cs)
 {
 	U16 i;
