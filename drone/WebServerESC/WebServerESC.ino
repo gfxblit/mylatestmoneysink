@@ -6,7 +6,7 @@
 #include <Servo.h>
 #include <WiServer.h>
 
-byte thestart = 0;  
+byte thestart = 0;
 
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
@@ -25,10 +25,10 @@ const prog_char security_passphrase[] PROGMEM = {"1872822821"};	// max 64 charac
 // WEP 128-bit keys
 // sample HEX keys
 prog_uchar wep_keys[] PROGMEM = { 0x83, 0x7A, 0xAF, 0x74, 0xEC,	// Key 0
-				  0x5F, 0xE5, 0x65, 0x9F, 0xF2,	// Key 1
-				  0x69, 0x61, 0x53, 0x1C, 0x51, // Key 2
-				  0xB5, 0x6F, 0xBE, 0xCB, 0x6B,	// Key 3
-				};
+                                  0x5F, 0xE5, 0x65, 0x9F, 0xF2,	// Key 1
+                                  0x69, 0x61, 0x53, 0x1C, 0x51, // Key 2
+                                  0xB5, 0x6F, 0xBE, 0xCB, 0x6B,	// Key 3
+                                };
 
 // setup the wireless mode
 // infrastructure - connect to AP
@@ -42,36 +42,35 @@ unsigned char security_passphrase_len;
 // This is our page serving function that generates web pages
 boolean sendMyPage(char* URL) 
 {
-         
     // Check if the requested URL matches "/"
     if (strcmp(URL, "/") == 0) {
         _webpageHelper();
         // URL was recognized
         return true;
     }
-  
+     
     if (strcmp (URL, "/?OPERATION=OFF") == 0) {
         thestart = 1;
         _webpageHelper();
-	    move_to_start();       
-	    return (true);
+        move_to_start();       
+        return (true);
     }    
-	 
-	
-	if (strcmp (URL, "/?OPERATION=ON") == 0) {
+
+
+    if (strcmp (URL, "/?OPERATION=ON") == 0) {
         thestart = 0;
         _webpageHelper();
-	    move_to_end();
-	    return (true);
+        move_to_end();
+        return (true);
     }    
     
  
     if (strcmp (URL, "/?OPERATION=90") == 0) {
-	    thestart = 0;
-	    _webpageHelper(); 
+        thestart = 0;
+        _webpageHelper(); 
         move_to_ninty();
-	    return (true);
-	}    
+        return (true);
+    }    
 
     // URL not found
     return false;
@@ -97,23 +96,18 @@ void setSpeed(int speed){
 }
 
 void setup() {
- 
-  // Put the motor to Arduino pin #9
-  myMotor.attach(8);
-  arm(); 
-  myMotor.write(70);
-   
-  // Required for I/O from Serial monitor
-  Serial.begin(57600);
-  Serial.println("Starting WiFi");
+    WiServer.enableVerboseMode(true);
 
-  // Initialize WiServer and have it use the sendMyPage function to serve pages
-  WiServer.init(sendMyPage);
-  
-  // Enable Serial output and ask WiServer to generate log messages (optional)
- // Serial.begin(9600);  // ...set up the serial ouput on 0004 style
-  //Serial.begin(57600);
-  WiServer.enableVerboseMode(false);
+    // Put the motor to Arduino pin #9
+    myMotor.attach(8);
+    arm(); 
+    myMotor.write(70);
+    // Required for I/O from Serial monitor
+    Serial.begin(57600);
+     Serial.println("Starting WiFi");
+
+     // Initialize WiServer and have it use the sendMyPage function to serve pages
+    WiServer.init(sendMyPage);
 }
 
 void loop()
@@ -126,14 +120,15 @@ void loop()
 
 void _webpageHelper() 
 {
-	WiServer.print ("<html>");
-	WiServer.print ("<head>");
+    WiServer.print ("<html>");
+    WiServer.print ("<head>");
     WiServer.print ("<meta http-equiv=""content-type"" content=""text/html; charset=utf-8"" />");
     //WiServer.print ("<meta http-equiv=""refresh"" content=""25;url=http://192.168.1.60"" />");
     WiServer.print ("<title>OneButtonAlert Device</title>");
     //WiServer.print ("<link rel=""stylesheet"" type=""text/css"" media=""One Button Alert"" href=""http://onebuttonalert.com/buttonpressed/demo.css"" />");
  
-	WiServer.print ("</head>");
+    WiServer.print ("</head>");
+
     WiServer.print ("<body><p align=""center"">");
 
 
@@ -179,7 +174,7 @@ void move_to_start()
     myMotor.write(80);
     //delay(500); // delay 1000ms, this allows the previous instruction to be finished. 
 }
-	 
+     
 
 void move_to_end() 
 {
@@ -190,3 +185,4 @@ void move_to_ninty()
 {
     myMotor.write(90);
 }
+
