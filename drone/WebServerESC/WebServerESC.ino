@@ -110,13 +110,24 @@ void setup() {
     WiServer.init(sendMyPage);
 }
 
+U8 state = 0;
+
 void loop()
 {
-  // Run WiServer
-  WiServer.server_task();
-  delay(10);
-}
+    U8 newState = WiServer.getConnectionState();
 
+    if(newState != state) {
+        state = newState;
+    }
+
+    if(!state) {
+        WiServer.init(sendMyPage);
+    }
+
+    // Run WiServer
+    WiServer.server_task();
+    delay(10);
+}
 
 void _webpageHelper() 
 {
