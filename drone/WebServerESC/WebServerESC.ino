@@ -133,22 +133,21 @@ void _webpageHelper()
 
 
 
-	// WiServer.print ("<div align=""center""><img src=""http://www.onebuttonalert.com/logo.png"" border=""0""></div>");
-	WiServer.print ("<br>");
-	WiServer.print ("<br>");
+    // WiServer.print ("<div align=""center""><img src=""http://www.onebuttonalert.com/logo.png"" border=""0""></div>");
+    WiServer.print ("<br>");
+    WiServer.print ("<br>");
     WiServer.print ("<b><font size=20><center>Device Local IP Address Status</center></b><br>");
     WiServer.print ("<center>");
-
     WiServer.print (local_ip[0], DEC);
-	WiServer.print (".");
-    WiServer.print (local_ip[1], DEC);
-	WiServer.print (".");
+    WiServer.print (".");
+    WiServer.print (local_ip[1]), DEC;
+    WiServer.print (".");
     WiServer.print (local_ip[2], DEC);
-	WiServer.print (".");
+    WiServer.print (".");
     WiServer.print (local_ip[3], DEC);
 
     WiServer.print ("</center></font><br>");
-     
+ 
     if (thestart == 0) {
 	    WiServer.print ("<div align=""center""><form><font size=20 color=red>Engine Motor - ON</font><br>");
 	    WiServer.print ("<method=GET>");
