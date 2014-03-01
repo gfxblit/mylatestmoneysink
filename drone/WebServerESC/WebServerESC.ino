@@ -12,12 +12,12 @@ byte thestart = 0;
 #define WIRELESS_MODE_ADHOC	2
 
 // Wireless configuration parameters ----------------------------------------
-unsigned char local_ip[] = {192,168,1,60};	// IP address of WiShield
-unsigned char gateway_ip[] = {192,168,1,254};	// router or gateway IP address
+unsigned char local_ip[] = {192,168,16,110};	// IP address of WiShield
+unsigned char gateway_ip[] = {192,168,16,254};	// router or gateway IP address
 unsigned char subnet_mask[] = {255,255,255,0};	// subnet mask for the local network
-const prog_char ssid[] PROGMEM = {"2WIRE689"};		// max 32 bytes
+const prog_char ssid[] PROGMEM = {"MP01"};		// max 32 bytes
 
-unsigned char security_type = 2;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
+unsigned char security_type = 0;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
 
 // WPA/WPA2 passphrase
 const prog_char security_passphrase[] PROGMEM = {"1872822821"};	// max 64 characters
