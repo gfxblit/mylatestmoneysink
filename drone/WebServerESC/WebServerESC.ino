@@ -3,6 +3,7 @@
  * The request happens through a GET http method.
  */
 
+#include <avr/pgmspace.h>
 #include <Servo.h>
 #include <WiServer.h>
 
@@ -38,6 +39,10 @@ unsigned char wireless_mode = WIRELESS_MODE_INFRA;
 unsigned char ssid_len;
 unsigned char security_passphrase_len;
 // End of wireless configuration parameters ----------------------------------------
+
+// Webpage in flash memory
+const prog_char htmlHead[] PROGMEM = {"<html><head><meta http-equiv=""content-type"" content=""text/html; charset=utf-8"" /><title>OneButtonAlert Device</title></head>"};
+const prog_char htmlMotor[] PROGMEM = {"<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""OFF"">Turn ON</option><option value=""ON"">Turn OFF</option><option value=""90"">90</option></select><h1><input type=submit value=SUBMIT style=""font-size:50px""></h1></form></div><br>"};
 
 // This is our page serving function that generates web pages
 boolean sendMyPage(char* URL) 
@@ -131,22 +136,9 @@ void loop()
 
 void _webpageHelper() 
 {
-    WiServer.print ("<html>");
-    WiServer.print ("<head>");
-    WiServer.print ("<meta http-equiv=""content-type"" content=""text/html; charset=utf-8"" />");
-    //WiServer.print ("<meta http-equiv=""refresh"" content=""25;url=http://192.168.1.60"" />");
-    WiServer.print ("<title>OneButtonAlert Device</title>");
-    //WiServer.print ("<link rel=""stylesheet"" type=""text/css"" media=""One Button Alert"" href=""http://onebuttonalert.com/buttonpressed/demo.css"" />");
- 
-    WiServer.print ("</head>");
-
+    WiServer.print_P(htmlHead);
+  
     WiServer.print ("<body><p align=""center"">");
-
-
-
-    // WiServer.print ("<div align=""center""><img src=""http://www.onebuttonalert.com/logo.png"" border=""0""></div>");
-    WiServer.print ("<br>");
-    WiServer.print ("<br>");
     WiServer.print ("<b><font size=20><center>Device Local IP Address Status</center></b><br>");
     WiServer.print ("<center>");
     WiServer.print (local_ip[0], DEC);
@@ -156,27 +148,21 @@ void _webpageHelper()
     WiServer.print (local_ip[2], DEC);
     WiServer.print (".");
     WiServer.print (local_ip[3], DEC);
-
     WiServer.print ("</center></font><br>");
  
     if (thestart == 0) {
-	    WiServer.print ("<div align=""center""><form><font size=20 color=red>Engine Motor - ON</font><br>");
-	    WiServer.print ("<method=GET>");
-        WiServer.print ("<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""OFF"">Turn ON</option><option value=""ON"">Turn OFF</option><option value=""90"">90</option></select>");
-	    WiServer.print ("<h1><input type=submit value=SUBMIT style=""font-size:50px""></h1></form></div><br>");
-	}    
+        WiServer.print("<div align=""center""><form><font size=20 color=red> Engine Motor - OFF</font><br>");
+        WiServer.print("<method=GET>");
+        WiServer.print_P(htmlMotor);
+    }    
     else {
-	    WiServer.print ("<div align=""center""><form><font size=20 color=green> Engine Motor - OFF</font><br>");
-	    WiServer.print ("<method=GET>");
-        WiServer.print ("<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""OFF"">Turn ON</option><option value=""ON"">Turn OFF</option><option value=""90"">90</option></select>");
-        // WiServer.print ("<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""OFF"">Turn OFF</option><option value=""90"">POWER UP</option></select>");
-	    WiServer.print ("<input type=submit value=SUBMIT ></form></div><br>");
-	}   
-	 
-
-	WiServer.print ("</div></body></html>");
+        WiServer.print("<div align=""center""><form><font size=20 color=green> Engine Motor - ON</font><br>");
+        WiServer.print("<method=GET>");
+        WiServer.print_P(htmlMotor);
+    }   
+     
+    WiServer.print ("</div></body></html>");
 }
-	 
 
 
 void move_to_start() 
