@@ -39,7 +39,8 @@ unsigned char security_passphrase_len;
 
 
 // This is our page serving function that generates web pages
-boolean sendMyPage(char* URL) {
+boolean sendMyPage(char* URL) 
+{
   
     // Check if the requested URL matches "/"
     if (strcmp(URL, "/") == 0) {
@@ -56,7 +57,8 @@ boolean sendMyPage(char* URL) {
 }
 
 
-void setup() {
+void setup() 
+{
   WiServer.enableVerboseMode(true);
 
   // Enable Serial output and ask WiServer to generate log messages (optional)
