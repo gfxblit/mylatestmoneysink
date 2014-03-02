@@ -7,7 +7,7 @@
 #include <Servo.h>
 #include <WiServer.h>
 
-byte thestart = 0;
+byte armed = 0;
 
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
@@ -42,7 +42,35 @@ unsigned char security_passphrase_len;
 
 // Webpage in flash memory
 const prog_char htmlHead[] PROGMEM = {"<html><head><meta http-equiv=""content-type"" content=""text/html; charset=utf-8"" /><title>OneButtonAlert Device</title></head>"};
-const prog_char htmlMotor[] PROGMEM = {"<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""OFF"">Turn ON</option><option value=""ON"">Turn OFF</option><option value=""90"">90</option></select><h1><input type=submit value=SUBMIT style=""font-size:50px""></h1></form></div><br>"};
+const prog_char htmlMotor[] PROGMEM = {
+"<select name=""OPERATION"" id=""OPERATION"" style=""font-size:50px""><option value=""reset"">Reset Motors</option><option value=""arm"">Arm Motors</option><option value=""throttle25"">Throttle 25</option><option value=""throttle50"">Throttle 50</option><option value=""throttle75"">Throttle 75</option></select><h1><input type=submit value=SUBMIT style=""font-size:50px""></h1></form></div><br>"};
+
+// time of last arming
+unsigned long lastArmTime = 0;
+
+// wifi connection state
+U8 state = 0;
+
+// These are the motors
+Servo throttleMotor;
+Servo pitchMotor;
+Servo yawMotor;
+Servo rollMotor;
+
+/*
+Servo angle : PWM range
+40 : 0    - 1230
+60 : 1231 - 1360
+70 : 1361 - 1490
+90 : 1491 - 1620
+100: 1621 - 1749
+120: 1750 +
+*/
+// speed is 0-100
+int servoAngleForSpeed(int speed)
+{
+    return map(speed, 0, 100, 40, 120);
+}
 
 // This is our page serving function that generates web pages
 boolean sendMyPage(char* URL) 
@@ -54,68 +82,80 @@ boolean sendMyPage(char* URL)
         return true;
     }
      
-    if (strcmp (URL, "/?OPERATION=OFF") == 0) {
-        thestart = 1;
+    if (strcmp (URL, "/?OPERATION=reset") == 0) {
+        resetMotors();
         _webpageHelper();
-        move_to_start();       
         return (true);
-    }    
-
-
-    if (strcmp (URL, "/?OPERATION=ON") == 0) {
-        thestart = 0;
+    }
+ 
+    if (strcmp (URL, "/?OPERATION=arm") == 0) {
+        arm();
         _webpageHelper();
-        move_to_end();
         return (true);
-    }    
+    }
+    
+    if (strcmp (URL, "/?OPERATION=throttle25") == 0) {
+        throttleMotor.write(servoAngleForSpeed(25));
+        _webpageHelper();
+        return (true);
+    }
+    
+    if (strcmp (URL, "/?OPERATION=throttle50") == 0) {
+        throttleMotor.write(servoAngleForSpeed(50));
+        _webpageHelper(); 
+        return (true);
+    }
+    
+    if (strcmp (URL, "/?OPERATION=throttle75") == 0) {
+        throttleMotor.write(servoAngleForSpeed(75));
+        _webpageHelper(); 
+        return (true);
+    }
     
  
-    if (strcmp (URL, "/?OPERATION=90") == 0) {
-        thestart = 0;
-        _webpageHelper(); 
-        move_to_ninty();
-        return (true);
-    }    
-
+  
+    Serial.println("url not found");
     // URL not found
     return false;
 }
 
-int i = 0;     // Loop counter 
-    
-// This is our motor.
-Servo myMotor;
-
-void arm(){
-    // arm the speed controller, modify as necessary for your ESC  
-    setSpeed(0); 
-    delay(3000); //delay 1 second,  some speed controllers may need longer
+void resetMotors()
+{
+    throttleMotor.write(servoAngleForSpeed(0));
+    yawMotor.write(servoAngleForSpeed(50));
+    rollMotor.write(servoAngleForSpeed(50));
+    pitchMotor.write(servoAngleForSpeed(50));    
 }
 
-void setSpeed(int speed){
-      // speed is from 0 to 100 where 0 is off and 100 is maximum speed
-      //the following maps speed values of 0-100 to angles from 0-180,
-     // some speed controllers may need different values, see the ESC instructions
-     int angle = map(speed, 0, 100, 0, 180);
-     myMotor.write(angle);    
-}
-
-void setup() {
-    WiServer.enableVerboseMode(true);
-
-    // Put the motor to Arduino pin #9
-    myMotor.attach(8);
-    arm(); 
-    myMotor.write(70);
-    // Required for I/O from Serial monitor
+void setup() 
+{    
+     // Required for I/O from Serial monitor
     Serial.begin(57600);
-     Serial.println("Starting WiFi");
-
+ 
+    Serial.println("Starting WiFi");
      // Initialize WiServer and have it use the sendMyPage function to serve pages
     WiServer.init(sendMyPage);
-}
 
-U8 state = 0;
+
+    rollMotor.attach(6);
+    yawMotor.attach(7);
+    throttleMotor.attach(8);
+    pitchMotor.attach(9);
+    
+    WiServer.enableVerboseMode(true);
+
+    Serial.println("setting all channels at resting state");
+    resetMotors();
+    delay(5000);
+    
+    arm();    
+    
+    /*
+    Serial.println("setting throttle to 25");
+    throttleMotor.write(servoAngleForSpeed(25));
+    */
+    
+ }
 
 void loop()
 {
@@ -127,7 +167,7 @@ void loop()
 
     if(!state) {
         WiServer.init(sendMyPage);
-    }
+    } 
 
     // Run WiServer
     WiServer.server_task();
@@ -150,13 +190,13 @@ void _webpageHelper()
     WiServer.print (local_ip[3], DEC);
     WiServer.print ("</center></font><br>");
  
-    if (thestart == 0) {
-        WiServer.print("<div align=""center""><form><font size=20 color=red> Engine Motor - OFF</font><br>");
+    if (armed) {
+        WiServer.print("<div align=""center""><form><font size=20 color=green> Engine Motor - ON</font><br>");
         WiServer.print("<method=GET>");
         WiServer.print_P(htmlMotor);
     }    
     else {
-        WiServer.print("<div align=""center""><form><font size=20 color=green> Engine Motor - ON</font><br>");
+        WiServer.print("<div align=""center""><form><font size=20 color=red> Engine Motor - OFF</font><br>");
         WiServer.print("<method=GET>");
         WiServer.print_P(htmlMotor);
     }   
@@ -164,21 +204,20 @@ void _webpageHelper()
     WiServer.print ("</div></body></html>");
 }
 
-
-void move_to_start() 
+void arm() 
 {
-    myMotor.write(80);
-    //delay(500); // delay 1000ms, this allows the previous instruction to be finished. 
+    unsigned long now = millis();
+    
+    // don't try rearming if we already tried earlier, this will confusing the APM
+    if(now - lastArmTime < 6000) {
+         return;
+    }
+    
+    Serial.println("arming");
+    throttleMotor.write(servoAngleForSpeed(0));
+    yawMotor.write(servoAngleForSpeed(130));
+    delay(5000);
+    resetMotors();
+    armed = 1;
+    lastArmTime = now;
 }
-     
-
-void move_to_end() 
-{
-    myMotor.write(70);
-}
-
-void move_to_ninty()
-{
-    myMotor.write(90);
-}
-
